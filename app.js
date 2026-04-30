@@ -712,14 +712,22 @@ Be concise (2-4 sentences max per reply), helpful, and conversational. Use emoji
         if (conversationHistory.length > 20) conversationHistory = conversationHistory.slice(-20);
 
         try {
-            const response = await fetch("https://api.anthropic.com/v1/messages", {
+            let geminiApiKey = localStorage.getItem("gemini_api_key");
+            if (!geminiApiKey) {
+                return "Please set your Gemini API Key in the Settings tab to use the intelligent AI assistant.";
+            }
+
+            const contents = conversationHistory.map(m => ({
+                role: (m.role === 'assistant' || m.role === 'model') ? 'model' : 'user',
+                parts: [{ text: m.content }]
+            }));
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    model: "claude-sonnet-4-20250514",
-                    max_tokens: 1000,
-                    system: systemPrompt,
-                    messages: conversationHistory
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    contents: contents
                 })
             });
 
@@ -729,8 +737,8 @@ Be concise (2-4 sentences max per reply), helpful, and conversational. Use emoji
             }
 
             const data = await response.json();
-            const aiText = data.content?.[0]?.text || "I couldn't generate a response. Please try again.";
-            conversationHistory.push({ role: "assistant", content: aiText });
+            const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't generate a response. Please try again.";
+            conversationHistory.push({ role: "model", content: aiText });
             return aiText;
 
         } catch (err) {
@@ -782,5 +790,77 @@ Be concise (2-4 sentences max per reply), helpful, and conversational. Use emoji
     if (chatInput) {
         chatInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleSend(); });
     }
+
+    // =============================================
+    // MOCK DATA (NFTs & Messages)
+    // =============================================
+    function loadMockData() {
+        const nftContainer = document.getElementById('nft-assets');
+        if (nftContainer) {
+            const mockNFTs = [
+                { name: "CyberPunk #4521", collection: "CyberPunks", price: "2.4 ETH", gradient: "linear-gradient(45deg, #ff00cc, #333399)" },
+                { name: "Ape Club #992", collection: "Bored Apes", price: "45 ETH", gradient: "linear-gradient(45deg, #f12711, #f5af19)" },
+                { name: "Azuki #102", collection: "Azuki", price: "12.5 ETH", gradient: "linear-gradient(45deg, #00c6ff, #0072ff)" },
+                { name: "Doodle #82", collection: "Doodles", price: "4.1 ETH", gradient: "linear-gradient(45deg, #f79d00, #64f38c)" }
+            ];
+            
+            nftContainer.innerHTML = mockNFTs.map(nft => `
+                <div class="card premium-card" style="padding: 1rem;">
+                    <div style="width: 100%; height: 160px; border-radius: 8px; background: ${nft.gradient}; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 3rem; opacity: 0.8;">💎</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.2rem;">${nft.collection}</p>
+                            <h3 style="font-size: 1.1rem; font-weight: 600;">${nft.name}</h3>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="color: var(--text-secondary); font-size: 0.75rem; margin-bottom: 0.2rem;">Floor</p>
+                            <p style="color: #10b981; font-weight: 600; font-size: 0.95rem;">${nft.price}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        const messagesContainer = document.querySelector('#view-messages .premium-card');
+        if (messagesContainer) {
+            const mockMessages = [
+                { sender: "System Alert", time: "10:30 AM", msg: "Ethereum gas fees have dropped by 45%.", unread: true },
+                { sender: "Portfolio Manager", time: "Yesterday", msg: "Your monthly investment summary is ready.", unread: true },
+                { sender: "Security", time: "Oct 24", msg: "New login detected from a verified device.", unread: false }
+            ];
+
+            const msgListHtml = `<div style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1rem;">
+                ${mockMessages.map(m => `
+                <div style="display: flex; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; align-items: center; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: ${m.unread ? 'var(--primary-color)' : '#333'}; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
+                        ${m.sender === 'Security' ? '🔒' : (m.sender === 'System Alert' ? '⚡' : '📊')}
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
+                            <h4 style="font-weight: ${m.unread ? '600' : '400'}; font-size: 0.95rem; color: ${m.unread ? 'white' : 'var(--text-secondary)'};">${m.sender}</h4>
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);">${m.time}</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">${m.msg}</p>
+                    </div>
+                    ${m.unread ? '<div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>' : ''}
+                </div>
+                `).join('')}
+            </div>`;
+            
+            const emptyState = messagesContainer.querySelector('.empty-state');
+            if (emptyState) emptyState.style.display = 'none';
+            
+            if (!document.getElementById('mock-msg-list')) {
+                const wrapper = document.createElement('div');
+                wrapper.id = 'mock-msg-list';
+                wrapper.innerHTML = msgListHtml;
+                messagesContainer.appendChild(wrapper);
+            }
+        }
+    }
+
+    loadMockData();
 
 });

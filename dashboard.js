@@ -110,24 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadChartData();
     }
 
-    // 2. Mock Connect Wallet Functionality
-    const connectBtn = document.getElementById('connect-wallet-btn');
-    if (connectBtn) {
-        connectBtn.addEventListener('click', () => {
-            connectBtn.textContent = "Connecting...";
-            connectBtn.disabled = true;
-            
-            setTimeout(() => {
-                connectBtn.textContent = "0x7A2...9B4";
-                connectBtn.style.background = "#10b981"; // Green to indicate success
-                connectBtn.style.color = "white";
-                connectBtn.style.transform = "none";
-                connectBtn.style.cursor = "default";
-                if(window.showToast) window.showToast("Wallet Connected Successfully! 🟢");
-            }, 1200); // Simulated delay
-        });
-    }
-    // 3. Analytics Asset Distribution Chart
+    // 2. Analytics Asset Distribution Chart
     const analyticsCanvas = document.getElementById('assetDistributionChart');
     if (analyticsCanvas) {
         const analyticsCtx = analyticsCanvas.getContext('2d');
@@ -202,6 +185,80 @@ document.addEventListener("DOMContentLoaded", () => {
                             color: '#94a3b8',
                             callback: function(value) { return '$' + (value/1000) + 'k'; }
                         }
+                    }
+                }
+            }
+        });
+    }
+    
+    // 5. Currency Bar Chart
+    const currencyBarCanvas = document.getElementById('currencyBarChart');
+    if (currencyBarCanvas) {
+        const currencyBarCtx = currencyBarCanvas.getContext('2d');
+        new Chart(currencyBarCtx, {
+            type: 'bar',
+            data: {
+                labels: ['BTC', 'ETH', 'SOL', 'ADA', 'DOT'],
+                datasets: [{
+                    label: 'Price ($)',
+                    data: [65000, 3500, 150, 0.5, 7.2],
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                    borderColor: '#3b82f6',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                        ticks: {
+                            color: '#94a3b8',
+                            callback: function(value) { return '$' + value; }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 6. Analytics Donut Chart
+    const analyticsDonutCanvas = document.getElementById('analyticsDonutChart');
+    if (analyticsDonutCanvas) {
+        const analyticsDonutCtx = analyticsDonutCanvas.getContext('2d');
+        new Chart(analyticsDonutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['DeFi', 'NFTs', 'Layer 1', 'Stablecoins'],
+                datasets: [{
+                    data: [35, 20, 40, 5],
+                    backgroundColor: [
+                        '#3b82f6', // blue
+                        '#8b5cf6', // purple
+                        '#10b981', // green
+                        '#ef4444'  // red
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { color: '#94a3b8', padding: 20, font: { size: 12, family: "'Outfit', sans-serif" } }
                     }
                 }
             }

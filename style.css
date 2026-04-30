@@ -560,6 +560,114 @@ body {
     transform: translateX(0);
 }
 
+/* Wallet Input */
+.wallet-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    outline: none;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+.wallet-input:focus {
+    border-color: var(--primary-color);
+}
+
+/* Notification Badge */
+.notif-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-red);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    padding: 0 4px;
+    margin-left: auto;
+}
+
+/* Like Buttons */
+.like-btn,
+.like-btn-discover {
+    position: absolute;
+    top: 10px;
+    right: 38px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: all 0.2s;
+    padding: 0;
+    line-height: 1;
+}
+.card:hover .like-btn,
+.card:hover .like-btn-discover {
+    opacity: 1;
+}
+.like-btn.liked,
+.like-btn-discover.liked {
+    opacity: 1;
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Header Actions */
+.header-actions {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+/* Likes View */
+#view-likes .likes-discover-grid {
+    margin-top: 1.5rem;
+}
+
 /* Scrollbars */
 ::-webkit-scrollbar {
     width: 6px;
@@ -588,101 +696,6 @@ body {
     #toast-container { right: 320px; }
 }
 
-@media (max-width: 768px) {
-    .app-layout {
-        grid-template-columns: 1fr;
-        height: auto;
-        overflow: auto;
-    }
-    .sidebar { display: none; }
-    .main-content { height: auto; overflow: visible; }
-    .ai-panel { height: 500px; border-left: none; border-top: 1px solid var(--border-color); }
-
-/* --- MOBILE RESPONSIVE DESIGN --- */
-@media (max-width: 768px) {
-    .app-layout {
-        grid-template-columns: 1fr;
-    }
-    
-    .sidebar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 70px;
-        flex-direction: row;
-        justify-content: space-around;
-        padding: 0;
-        z-index: 100;
-        background: rgba(15, 15, 20, 0.95);
-        border-right: none;
-        border-top: 1px solid var(--border-color);
-        border-radius: 0;
-    }
-
-    [data-theme="light"] .sidebar {
-        background: rgba(255, 255, 255, 0.95);
-    }
-    
-    .sidebar .logo,
-    .sidebar .nav-item span {
-        display: none;
-    }
-    
-    .sidebar .nav-container {
-        flex-direction: row;
-        width: 100%;
-        justify-content: space-around;
-    }
-    
-    .nav-menu {
-        flex-direction: row;
-        gap: 0;
-        width: 100%;
-        justify-content: space-around;
-    }
-    
-    .nav-menu.bottom-menu {
-        margin-top: 0;
-        border-top: none;
-        padding-top: 0;
-    }
-    
-    .nav-item {
-        padding: 0.8rem;
-        border-radius: 50%;
-        margin-bottom: 0;
-    }
-    
-    .scroll-area {
-        padding: 1.5rem 1.5rem 90px 1.5rem; /* Add bottom padding so content isn't hidden under nav */
-    }
-
-    .top-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-
-    .charts-row, .analytics-grid {
-        grid-template-columns: 1fr !important;
-    }
-
-    .ai-panel {
-        width: 100%;
-    }
-
-    .ai-floating-btn {
-        bottom: 90px; /* Keep it above the mobile bottom nav */
-    }
-
-    .login-card {
-        width: 90%;
-        padding: 2rem;
-    }
-}
-    #toast-container { right: 20px; bottom: 20px; }
-}
 
 /* --- LOGIN OVERLAY --- */
 .login-wrapper {
@@ -815,4 +828,6 @@ body {
         width: 90%;
         padding: 2rem;
     }
+
+    #toast-container { right: 20px; bottom: 20px; }
 }
